@@ -6,7 +6,22 @@ import { Button } from "@/components/ui/button"
 import { WashingMachine } from "lucide-react"
 import MachinesTable from "./MachinesTable"
 import AddMachineDialog from "./AddMachineDialog"
-import { supabase } from "@/lib/supabase"
+
+function parseCSV(csvText: string): Record<string, any>[] {
+  const lines = csvText.trim().split("\n")
+  if (lines.length < 2) return []
+  const headers = lines[0].split(",").map((header) => header.replace(/"/g, "").trim())
+  const data: Record<string, any>[] = []
+  for (let i = 1; i < lines.length; i++) {
+    const values = lines[i].split(",").map((value) => value.replace(/"/g, "").trim())
+    const row: Record<string, any> = {}
+    headers.forEach((header, index) => {
+      row[header] = values[index] || null
+    })
+    data.push(row)
+  }
+  return data
+}
 
 export const metadata = {
   title: 'Laundry Machines | AURO Admin',
@@ -19,18 +34,11 @@ export default function MachinesPage() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const fetchMachines = async () => {
-      try {
-        const { data, error } = await supabase.from("machines").select("*")
-        if (error) throw error
-        setMachines(data || [])
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to fetch machines")
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchMachines()
+    fetch("/data/Auro%20Backend%20Data%20-%20machines%20(1).csv")
+      .then((res) => res.text())
+      .then((csvText) => setMachines(parseCSV(csvText)))
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false))
   }, [])
 
   // Stats
