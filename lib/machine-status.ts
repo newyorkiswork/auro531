@@ -30,7 +30,15 @@ export async function updateMachineStatuses() {
       .from('machines')
       .select('*')
 
-    if (error) throw error
+    if (error) {
+      console.error('Error fetching machines:', error)
+      throw error
+    }
+
+    if (!machines || machines.length === 0) {
+      console.log('No machines found in the database')
+      return
+    }
 
     const updates = machines.map((machine) => ({
       id: machine.id,
@@ -42,11 +50,15 @@ export async function updateMachineStatuses() {
       .from('machines')
       .upsert(updates)
 
-    if (updateError) throw updateError
+    if (updateError) {
+      console.error('Error updating machines:', updateError)
+      throw updateError
+    }
 
     console.log('Machine statuses updated successfully')
   } catch (error) {
     console.error('Error updating machine statuses:', error)
+    // Don't throw the error, just log it
   }
 }
 
@@ -55,9 +67,55 @@ export function startMachineStatusUpdates() {
   // Initial update
   updateMachineStatuses()
 
-  // Set up interval for updates every 45 minutes
-  const intervalId = setInterval(updateMachineStatuses, 45 * 60 * 1000)
+  // Set up interval for updates every 5 minutes (reduced from 45 for testing)
+  const intervalId = setInterval(updateMachineStatuses, 5 * 60 * 1000)
 
   // Return cleanup function
   return () => clearInterval(intervalId)
+}
+
+// Function to initialize machines table with sample data
+export async function initializeMachines() {
+  try {
+    const { data: existingMachines, error: fetchError } = await supabase
+      .from('machines')
+      .select('*')
+
+    if (fetchError) {
+      console.error('Error fetching existing machines:', fetchError)
+      throw fetchError
+    }
+
+    // If machines already exist, don't initialize
+    if (existingMachines && existingMachines.length > 0) {
+      console.log('Machines already initialized')
+      return
+    }
+
+    // Sample machine data
+    const machines = [
+      { type: 'Washer', location: 'Floor 1', status: 'idle' as MachineStatus },
+      { type: 'Washer', location: 'Floor 1', status: 'idle' as MachineStatus },
+      { type: 'Dryer', location: 'Floor 1', status: 'idle' as MachineStatus },
+      { type: 'Dryer', location: 'Floor 1', status: 'idle' as MachineStatus },
+      { type: 'Washer', location: 'Floor 2', status: 'idle' as MachineStatus },
+      { type: 'Washer', location: 'Floor 2', status: 'idle' as MachineStatus },
+      { type: 'Dryer', location: 'Floor 2', status: 'idle' as MachineStatus },
+      { type: 'Dryer', location: 'Floor 2', status: 'idle' as MachineStatus },
+    ]
+
+    const { error: insertError } = await supabase
+      .from('machines')
+      .insert(machines)
+
+    if (insertError) {
+      console.error('Error inserting machines:', insertError)
+      throw insertError
+    }
+
+    console.log('Machines initialized successfully')
+  } catch (error) {
+    console.error('Error initializing machines:', error)
+    // Don't throw the error, just log it
+  }
 } 
