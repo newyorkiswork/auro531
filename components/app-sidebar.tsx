@@ -1,4 +1,5 @@
 import { BarChart3, Building2, Calendar, Car, Home, Package, Truck, Users, Wrench } from "lucide-react"
+import Image from "next/image"
 
 import {
   Sidebar,
@@ -76,13 +77,7 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarHeader className="border-b border-sidebar-border">
         <div className="flex items-center gap-2 px-4 py-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <Car className="h-4 w-4" />
-          </div>
-          <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-semibold">Auro Platform</span>
-            <span className="truncate text-xs text-muted-foreground">Admin Console</span>
-          </div>
+          <Image src="/logo-horizontal.png" alt="Auro Logo" width={120} height={40} priority />
         </div>
       </SidebarHeader>
       <SidebarContent>

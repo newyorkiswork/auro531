@@ -1,10 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Machine, MachineStatus } from '@/lib/machine-status'
+import { Machine, MachineStatus, startMachineStatusUpdates, initializeMachines } from '@/lib/machine-status'
 import { MachineStatusIndicator } from './machine-status'
 import { supabase } from '@/lib/supabase'
-import { startMachineStatusUpdates } from '@/lib/machine-status'
 
 export function MachineGrid() {
   const [machines, setMachines] = useState<Machine[]>([])
@@ -12,6 +11,9 @@ export function MachineGrid() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    // Initialize machines if needed
+    initializeMachines()
+
     // Start the machine status updates
     const cleanup = startMachineStatusUpdates()
 
@@ -49,7 +51,7 @@ export function MachineGrid() {
           if (payload.eventType === 'UPDATE') {
             setMachines((current) =>
               current.map((machine) =>
-                machine.id === payload.new.id ? payload.new : machine
+                machine.id === payload.new.id ? (payload.new as Machine) : machine
               )
             )
           }

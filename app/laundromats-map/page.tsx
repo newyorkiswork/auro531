@@ -54,7 +54,7 @@ export default function LaundromatsMapPage() {
             {userLocation && (
               <Marker
                 position={userLocation}
-                icon={{ url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png" }}
+                icon={{ url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png" }}
                 title="Your Location"
               />
             )}

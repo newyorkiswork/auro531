@@ -70,9 +70,10 @@ export default function LaundromatsExplorePage() {
     const bounds = mapRef.current.getBounds()
     if (!bounds) return
     setFiltered(
-      laundromats.filter((l) => {
-        const lat = typeof l.latitude === "string" ? parseFloat(l.latitude) : l.latitude
-        const lng = typeof l.longitude === "string" ? parseFloat(l.longitude) : l.longitude
+      laundromats.filter((laundromat) => {
+        const lat = typeof laundromat.latitude === "string" ? parseFloat(laundromat.latitude) : laundromat.latitude
+        const lng = typeof laundromat.longitude === "string" ? parseFloat(laundromat.longitude) : laundromat.longitude
+        if (isNaN(lat) || isNaN(lng)) return false
         return bounds.contains({ lat, lng })
       })
     )
@@ -168,7 +169,7 @@ export default function LaundromatsExplorePage() {
           {userLocation && (
             <Marker
               position={userLocation}
-              icon={{ url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png" }}
+              icon={{ url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png" }}
               title="Your Location"
             />
           )}
@@ -187,7 +188,6 @@ export default function LaundromatsExplorePage() {
                         clusterer={clusterer}
                         onClick={() => setSelected(laundromat)}
                         title={laundromat.name}
-                        icon={selected && selected.laundromat_id === laundromat.laundromat_id ? undefined : undefined}
                       />
                     )
                   })
