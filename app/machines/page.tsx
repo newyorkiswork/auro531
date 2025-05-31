@@ -23,11 +23,6 @@ function parseCSV(csvText: string): Record<string, any>[] {
   return data
 }
 
-export const metadata = {
-  title: 'Laundry Machines | AURO Admin',
-  description: 'Monitor and manage laundry machine statuses',
-}
-
 export default function MachinesPage() {
   const [machines, setMachines] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
