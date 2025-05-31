@@ -11,8 +11,7 @@ export function MachineGrid() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    // Initialize machines if needed
-    initializeMachines()
+    // Removed initializeMachines() call from client-side
 
     // Start the machine status updates
     const cleanup = startMachineStatusUpdates()
