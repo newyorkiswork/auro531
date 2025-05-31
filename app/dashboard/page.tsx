@@ -64,8 +64,8 @@ export default async function DashboardPage() {
 
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-      <div className="flex items-center justify-between space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+      <div className="flex flex-col md:flex-row items-center justify-between space-y-2 md:space-y-0">
+        <h2 className="text-3xl font-bold tracking-tight text-center md:text-left">Dashboard</h2>
         <div className="flex items-center space-x-2">
           <Badge variant="outline" className="text-green-600">
             <CheckCircle className="w-3 h-3 mr-1" />
@@ -74,9 +74,9 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {statCards.map((card, index) => (
-          <Card key={index}>
+          <Card key={index} className="w-full">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">{card.title}</CardTitle>
               <card.icon className={`h-4 w-4 ${card.color}`} />
@@ -96,8 +96,8 @@ export default async function DashboardPage() {
         ))}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4">
+        <Card className="col-span-1 md:col-span-2 lg:col-span-4 w-full">
           <CardHeader>
             <CardTitle>Recent Activity</CardTitle>
             <CardDescription>Latest system events and notifications</CardDescription>
@@ -130,7 +130,7 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="col-span-3">
+        <Card className="col-span-1 md:col-span-2 lg:col-span-3 w-full">
           <CardHeader>
             <CardTitle>System Status</CardTitle>
             <CardDescription>Current platform health</CardDescription>

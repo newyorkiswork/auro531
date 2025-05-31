@@ -60,13 +60,13 @@ export default function DriversPage() {
 
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">Drivers</h2>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Drivers</h2>
         <AddDriverDialog />
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Drivers</CardTitle>
@@ -110,13 +110,13 @@ export default function DriversPage() {
           <CardDescription>Manage driver availability and view performance</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center space-x-4 mb-4">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 mb-4">
             <div className="relative flex-1">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search drivers..." className="pl-8" />
+              <Input placeholder="Search drivers..." className="pl-8 w-full" />
             </div>
             <Select>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full sm:w-[180px]">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
@@ -128,7 +128,7 @@ export default function DriversPage() {
               </SelectContent>
             </Select>
             <Select>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full sm:w-[180px]">
                 <SelectValue placeholder="Vehicle type" />
               </SelectTrigger>
               <SelectContent>
@@ -140,78 +140,80 @@ export default function DriversPage() {
             </Select>
           </div>
 
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Active</TableHead>
-                <TableHead>Driver</TableHead>
-                <TableHead>Contact</TableHead>
-                <TableHead>Vehicle</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Registered</TableHead>
-                <TableHead>Last Update</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {drivers.map((driver) => (
-                <TableRow key={driver.driver_id}>
-                  <TableCell>
-                    <Checkbox
-                      checked={driver.is_active}
-                      aria-label={`Toggle ${driver.full_name} availability`}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <div className="font-medium">{driver.full_name}</div>
-                      <div className="text-sm text-muted-foreground">ID: {driver.driver_id}</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="space-y-1">
-                      <div className="flex items-center text-sm">
-                        <Phone className="h-3 w-3 mr-1" />
-                        {driver.phone_number}
-                      </div>
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <Mail className="h-3 w-3 mr-1" />
-                        {driver.email}
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <div className="font-medium">{driver.vehicle_type}</div>
-                      <div className="text-sm text-muted-foreground">{driver.license_plate}</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>{getStatusBadge(driver.current_status || "")}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <Calendar className="h-3 w-3 mr-1" />
-                      {driver.date_registered ? new Date(driver.date_registered).toLocaleDateString() : ""}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm text-muted-foreground">
-                      {driver.last_status_update ? new Date(driver.last_status_update).toLocaleString() : ""}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex space-x-2">
-                      <Button variant="ghost" size="sm">
-                        View Profile
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        Message
-                      </Button>
-                    </div>
-                  </TableCell>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Active</TableHead>
+                  <TableHead>Driver</TableHead>
+                  <TableHead>Contact</TableHead>
+                  <TableHead>Vehicle</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Registered</TableHead>
+                  <TableHead>Last Update</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {drivers.map((driver) => (
+                  <TableRow key={driver.driver_id}>
+                    <TableCell>
+                      <Checkbox
+                        checked={driver.is_active}
+                        aria-label={`Toggle ${driver.full_name} availability`}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <div>
+                        <div className="font-medium">{driver.full_name}</div>
+                        <div className="text-sm text-muted-foreground">ID: {driver.driver_id}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="space-y-1">
+                        <div className="flex items-center text-sm">
+                          <Phone className="h-3 w-3 mr-1" />
+                          {driver.phone_number}
+                        </div>
+                        <div className="flex items-center text-sm text-muted-foreground">
+                          <Mail className="h-3 w-3 mr-1" />
+                          {driver.email}
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div>
+                        <div className="font-medium">{driver.vehicle_type}</div>
+                        <div className="text-sm text-muted-foreground">{driver.license_plate}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell>{getStatusBadge(driver.current_status || "")}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center text-sm text-muted-foreground">
+                        <Calendar className="h-3 w-3 mr-1" />
+                        {driver.date_registered ? new Date(driver.date_registered).toLocaleDateString() : ""}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm text-muted-foreground">
+                        {driver.last_status_update ? new Date(driver.last_status_update).toLocaleString() : ""}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex space-x-2">
+                        <Button variant="ghost" size="sm">
+                          View Profile
+                        </Button>
+                        <Button variant="ghost" size="sm">
+                          Message
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
 
           {drivers.map(
             (driver) =>

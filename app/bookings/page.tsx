@@ -125,13 +125,13 @@ export default async function BookingsPage() {
           <CardDescription>Bookings grouped by date for easy management</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center space-x-4 mb-6">
+          <div className="flex flex-col md:flex-row items-stretch md:items-center space-y-2 md:space-x-4 md:space-y-0 mb-6">
             <div className="relative flex-1">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search bookings..." className="pl-8" />
+              <Input placeholder="Search bookings..." className="pl-8 w-full" />
             </div>
             <Select>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full md:w-[180px]">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
@@ -143,7 +143,7 @@ export default async function BookingsPage() {
               </SelectContent>
             </Select>
             <Select>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full md:w-[180px]">
                 <SelectValue placeholder="Payment status" />
               </SelectTrigger>
               <SelectContent>
@@ -164,60 +164,62 @@ export default async function BookingsPage() {
                   <Badge variant="outline">{grouped[date].length} bookings</Badge>
                 </div>
 
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Booking ID</TableHead>
-                      <TableHead>Customer</TableHead>
-                      <TableHead>Service</TableHead>
-                      <TableHead>Location</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Payment</TableHead>
-                      <TableHead>Amount</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {grouped[date].map((booking) => (
-                      <TableRow key={booking.booking_id}>
-                        <TableCell className="font-medium">{booking.booking_id}</TableCell>
-                        <TableCell>
-                          <div>
-                            <div className="font-medium">{booking.user_full_name_snapshot}</div>
-                            <div className="text-sm text-muted-foreground">{booking.user_phone_snapshot}</div>
-                          </div>
-                        </TableCell>
-                        <TableCell>{booking.service_name_snapshot}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center">
-                            <MapPin className="h-3 w-3 mr-1" />
-                            <span className="truncate max-w-[200px]">{booking.laundromat_name_snapshot}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>{getStatusBadge(booking.current_booking_status)}</TableCell>
-                        <TableCell>{getPaymentBadge(booking.payment_status)}</TableCell>
-                        <TableCell>
-                          <div>
-                            <div className="font-medium">${booking.actual_cost || booking.estimated_cost}</div>
-                            {booking.actual_cost && booking.actual_cost !== booking.estimated_cost && (
-                              <div className="text-xs text-muted-foreground">Est: ${booking.estimated_cost}</div>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex space-x-2">
-                            <Button variant="ghost" size="sm">
-                              View
-                            </Button>
-                            <Button variant="ghost" size="sm">
-                              Edit
-                            </Button>
-                          </div>
-                        </TableCell>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Booking ID</TableHead>
+                        <TableHead>Customer</TableHead>
+                        <TableHead>Service</TableHead>
+                        <TableHead>Location</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Payment</TableHead>
+                        <TableHead>Amount</TableHead>
+                        <TableHead>Actions</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {grouped[date].map((booking) => (
+                        <TableRow key={booking.booking_id}>
+                          <TableCell className="font-medium">{booking.booking_id}</TableCell>
+                          <TableCell>
+                            <div>
+                              <div className="font-medium">{booking.user_full_name_snapshot}</div>
+                              <div className="text-sm text-muted-foreground">{booking.user_phone_snapshot}</div>
+                            </div>
+                          </TableCell>
+                          <TableCell>{booking.service_name_snapshot}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center">
+                              <MapPin className="h-3 w-3 mr-1" />
+                              <span className="truncate max-w-[200px]">{booking.laundromat_name_snapshot}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>{getStatusBadge(booking.current_booking_status)}</TableCell>
+                          <TableCell>{getPaymentBadge(booking.payment_status)}</TableCell>
+                          <TableCell>
+                            <div>
+                              <div className="font-medium">${booking.actual_cost || booking.estimated_cost}</div>
+                              {booking.actual_cost && booking.actual_cost !== booking.estimated_cost && (
+                                <div className="text-xs text-muted-foreground">Est: ${booking.estimated_cost}</div>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex space-x-2">
+                              <Button variant="ghost" size="sm">
+                                View
+                              </Button>
+                              <Button variant="ghost" size="sm">
+                                Edit
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               </div>
             ))}
           </div>

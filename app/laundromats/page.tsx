@@ -102,13 +102,13 @@ export default async function LaundromatsPage() {
           <CardDescription>All registered laundromat locations in NYC</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center space-x-4 mb-4">
+          <div className="flex flex-col md:flex-row items-stretch md:items-center space-y-2 md:space-x-4 md:space-y-0 mb-4">
             <div className="relative flex-1">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search laundromats..." className="pl-8" />
+              <Input placeholder="Search laundromats..." className="pl-8 w-full" />
             </div>
             <Select>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full md:w-[180px]">
                 <SelectValue placeholder="Filter by borough" />
               </SelectTrigger>
               <SelectContent>
@@ -121,7 +121,7 @@ export default async function LaundromatsPage() {
               </SelectContent>
             </Select>
             <Select>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full md:w-[180px]">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
               <SelectContent>
@@ -132,82 +132,84 @@ export default async function LaundromatsPage() {
             </Select>
           </div>
 
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Neighborhood</TableHead>
-                <TableHead>Borough</TableHead>
-                <TableHead>Rating</TableHead>
-                <TableHead>Machines</TableHead>
-                <TableHead>Contact</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {laundromats.slice(0, 20).map((laundromat) => (
-                <TableRow key={laundromat["Laundromat ID"]}>
-                  <TableCell>
-                    <div>
-                      <div className="font-medium">{laundromat.Name}</div>
-                      <div className="text-sm text-muted-foreground flex items-center">
-                        <MapPin className="h-3 w-3 mr-1" />
-                        {laundromat.Address}
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>{laundromat.Neighborhood}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{laundromat.Borough || "Unknown"}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center">
-                      <span className="font-medium">{laundromat.Rating}</span>
-                      <span className="ml-1">⭐</span>
-                      <span className="text-sm text-muted-foreground ml-1">({laundromat["Total User Ratings"]})</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <span className="font-medium">{laundromat.totalMachines}</span>
-                      <span className="text-sm text-muted-foreground"> total</span>
-                      <div className="text-sm text-green-600">{laundromat.activeMachines} active</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm">
-                      {laundromat.Phone && (
-                        <div className="flex items-center">
-                          <Phone className="h-3 w-3 mr-1" />
-                          {laundromat.Phone}
-                        </div>
-                      )}
-                      {laundromat["Hours of Operation"] && (
-                        <div className="flex items-center text-muted-foreground">
-                          <Clock className="h-3 w-3 mr-1" />
-                          <span className="truncate">{laundromat["Hours of Operation"].slice(0, 20)}...</span>
-                        </div>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex space-x-2">
-                      <Button variant="ghost" size="sm">
-                        View Details
-                      </Button>
-                      {laundromat["Google Maps URL"] && (
-                        <Button variant="ghost" size="sm" asChild>
-                          <a href={laundromat["Google Maps URL"]} target="_blank" rel="noopener noreferrer">
-                            <ExternalLink className="h-4 w-4" />
-                          </a>
-                        </Button>
-                      )}
-                    </div>
-                  </TableCell>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Neighborhood</TableHead>
+                  <TableHead>Borough</TableHead>
+                  <TableHead>Rating</TableHead>
+                  <TableHead>Machines</TableHead>
+                  <TableHead>Contact</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {laundromats.slice(0, 20).map((laundromat) => (
+                  <TableRow key={laundromat["Laundromat ID"]}>
+                    <TableCell>
+                      <div>
+                        <div className="font-medium">{laundromat.Name}</div>
+                        <div className="text-sm text-muted-foreground flex items-center">
+                          <MapPin className="h-3 w-3 mr-1" />
+                          {laundromat.Address}
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>{laundromat.Neighborhood}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline">{laundromat.Borough || "Unknown"}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center">
+                        <span className="font-medium">{laundromat.Rating}</span>
+                        <span className="ml-1">⭐</span>
+                        <span className="text-sm text-muted-foreground ml-1">({laundromat["Total User Ratings"]})</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div>
+                        <span className="font-medium">{laundromat.totalMachines}</span>
+                        <span className="text-sm text-muted-foreground"> total</span>
+                        <div className="text-sm text-green-600">{laundromat.activeMachines} active</div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm">
+                        {laundromat.Phone && (
+                          <div className="flex items-center">
+                            <Phone className="h-3 w-3 mr-1" />
+                            {laundromat.Phone}
+                          </div>
+                        )}
+                        {laundromat["Hours of Operation"] && (
+                          <div className="flex items-center text-muted-foreground">
+                            <Clock className="h-3 w-3 mr-1" />
+                            <span className="truncate">{laundromat["Hours of Operation"].slice(0, 20)}...</span>
+                          </div>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex space-x-2">
+                        <Button variant="ghost" size="sm">
+                          View Details
+                        </Button>
+                        {laundromat["Google Maps URL"] && (
+                          <Button variant="ghost" size="sm" asChild>
+                            <a href={laundromat["Google Maps URL"]} target="_blank" rel="noopener noreferrer">
+                              <ExternalLink className="h-4 w-4" />
+                            </a>
+                          </Button>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

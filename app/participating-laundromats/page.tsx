@@ -74,16 +74,16 @@ async function ParticipatingLaundromatsPage() {
 
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">Participating Laundromats</h2>
-        <Button>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Participating Laundromats</h2>
+        <Button className="w-full sm:w-auto">
           <Building2 className="mr-2 h-4 w-4" />
           Add Location
         </Button>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Locations</CardTitle>
@@ -132,13 +132,13 @@ async function ParticipatingLaundromatsPage() {
           <CardDescription>All registered participating laundromat locations in NYC</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center space-x-4 mb-4">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 mb-4">
             <div className="relative flex-1">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search participating laundromats..." className="pl-8" />
+              <Input placeholder="Search participating laundromats..." className="pl-8 w-full" />
             </div>
             <Select>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full sm:w-[180px]">
                 <SelectValue placeholder="Filter by borough" />
               </SelectTrigger>
               <SelectContent>
@@ -151,7 +151,7 @@ async function ParticipatingLaundromatsPage() {
               </SelectContent>
             </Select>
             <Select>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full sm:w-[180px]">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
               <SelectContent>
@@ -162,78 +162,66 @@ async function ParticipatingLaundromatsPage() {
             </Select>
           </div>
 
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Neighborhood</TableHead>
-                <TableHead>Borough</TableHead>
-                <TableHead>Rating</TableHead>
-                <TableHead>Active Machines</TableHead>
-                <TableHead>Contact</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {laundromats.map((laundromat) => (
-                <TableRow key={laundromat.laundromat_id}>
-                  <TableCell>
-                    <div>
-                      <div className="font-medium">{laundromat.name}</div>
-                      <div className="text-sm text-muted-foreground flex items-center">
-                        <MapPin className="h-3 w-3 mr-1" />
-                        {laundromat.address}
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>{laundromat.neighborhood}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{laundromat.borough || "Unknown"}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center">
-                      <span className="font-medium">{laundromat.rating}</span>
-                      <span className="ml-1">⭐</span>
-                      <span className="text-sm text-muted-foreground ml-1">({laundromat.total_user_ratings})</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-medium">{countActiveMachines(laundromat.laundromat_id)}</span>
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm">
-                      {laundromat.phone && (
-                        <div key={`phone-${laundromat.laundromat_id}`} className="flex items-center">
-                          <Phone className="h-3 w-3 mr-1" />
-                          {laundromat.phone}
-                        </div>
-                      )}
-                      {laundromat.hours_of_operation && (
-                        <div key={`hours-${laundromat.laundromat_id}`} className="flex items-center text-muted-foreground">
-                          <Clock className="h-3 w-3 mr-1" />
-                          <span className="truncate">{laundromat.hours_of_operation.slice(0, 20)}...</span>
-                        </div>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex space-x-2">
-                      <Button key={`view-${laundromat.laundromat_id}`} variant="ghost" size="sm">
-                        View Details
-                      </Button>
-                      {laundromat.google_maps_url && (
-                        <Button key={`maps-${laundromat.laundromat_id}`} variant="ghost" size="sm" asChild>
-                          <a href={laundromat.google_maps_url} target="_blank" rel="noopener noreferrer">
-                            <ExternalLink className="h-4 w-4" />
-                          </a>
-                        </Button>
-                      )}
-                    </div>
-                  </TableCell>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Neighborhood</TableHead>
+                  <TableHead>Borough</TableHead>
+                  <TableHead>Rating</TableHead>
+                  <TableHead>Active Machines</TableHead>
+                  <TableHead>Contact</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {laundromats.map((laundromat) => (
+                  <TableRow key={laundromat.laundromat_id}>
+                    <TableCell>
+                      <div>
+                        <div className="font-medium">{laundromat.name}</div>
+                        <div className="text-sm text-muted-foreground flex items-center">
+                          <MapPin className="h-3 w-3 mr-1" />
+                          {laundromat.address}
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>{laundromat.neighborhood}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline">{laundromat.borough || "Unknown"}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center">
+                        <span className="font-medium">{laundromat.rating}</span>
+                        <span className="ml-1">⭐</span>
+                        <span className="text-sm text-muted-foreground ml-1">({laundromat.total_user_ratings})</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center">
+                        <span className="font-medium">{countActiveMachines(laundromat.laundromat_id)}</span>
+                        <span className="text-sm text-muted-foreground ml-1">/ {laundromat.totalMachines}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-2">
+                        <Phone className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm">{laundromat.phone}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-2">
+                        <Button variant="ghost" size="sm">
+                          <ExternalLink className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

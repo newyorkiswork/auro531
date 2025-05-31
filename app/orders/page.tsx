@@ -166,13 +166,13 @@ export default function OrdersPage() {
           <CardDescription>Review and approve supply orders from users</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center space-x-4 mb-4">
+          <div className="flex flex-col md:flex-row items-stretch md:items-center space-y-2 md:space-x-4 md:space-y-0 mb-4">
             <div className="relative flex-1">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search orders..." className="pl-8" />
+              <Input placeholder="Search orders..." className="pl-8 w-full" />
             </div>
             <Select>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full md:w-[180px]">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
@@ -185,7 +185,7 @@ export default function OrdersPage() {
               </SelectContent>
             </Select>
             <Select>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full md:w-[180px]">
                 <SelectValue placeholder="Payment status" />
               </SelectTrigger>
               <SelectContent>
@@ -197,83 +197,85 @@ export default function OrdersPage() {
             </Select>
           </div>
 
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Order ID</TableHead>
-                <TableHead>Customer</TableHead>
-                <TableHead>Delivery Address</TableHead>
-                <TableHead>Order Date</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Payment</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {orders.map((order) => (
-                <TableRow key={order.supply_order_id}>
-                  <TableCell className="font-medium">{order.supply_order_id}</TableCell>
-                  <TableCell>
-                    <div>
-                      <div className="font-medium">{order.user_full_name_snapshot}</div>
-                      <div className="text-sm text-muted-foreground">ID: {order.user_id}</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-start">
-                      <MapPin className="h-3 w-3 mr-1 mt-0.5 flex-shrink-0" />
-                      <div className="text-sm">
-                        <div>{order.delivery_address_street}</div>
-                        <div className="text-muted-foreground">
-                          {order.delivery_address_city}, {order.delivery_address_state} {order.delivery_address_zip}
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Order ID</TableHead>
+                  <TableHead>Customer</TableHead>
+                  <TableHead>Delivery Address</TableHead>
+                  <TableHead>Order Date</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Payment</TableHead>
+                  <TableHead>Amount</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {orders.map((order) => (
+                  <TableRow key={order.supply_order_id}>
+                    <TableCell className="font-medium">{order.supply_order_id}</TableCell>
+                    <TableCell>
+                      <div>
+                        <div className="font-medium">{order.user_full_name_snapshot}</div>
+                        <div className="text-sm text-muted-foreground">ID: {order.user_id}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-start">
+                        <MapPin className="h-3 w-3 mr-1 mt-0.5 flex-shrink-0" />
+                        <div className="text-sm">
+                          <div>{order.delivery_address_street}</div>
+                          <div className="text-muted-foreground">
+                            {order.delivery_address_city}, {order.delivery_address_state} {order.delivery_address_zip}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>{order.order_timestamp ? new Date(order.order_timestamp).toLocaleDateString() : ""}</TableCell>
-                  <TableCell>{getStatusBadge(order.order_status)}</TableCell>
-                  <TableCell>{getPaymentBadge(order.payment_status)}</TableCell>
-                  <TableCell>
-                    <div>
-                      <div className="font-medium">${order.total_order_amount}</div>
-                      <div className="text-xs text-muted-foreground">Subtotal: ${order.subtotal_amount}</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex space-x-2">
-                      {order.order_status?.toLowerCase() === "pending" ? (
-                        <>
-                          <Button
-                            size="sm"
-                            className="bg-green-600 hover:bg-green-700"
-                            onClick={() => handleApprove(order.supply_order_id)}
-                            disabled={pendingActions.has(order.supply_order_id)}
-                          >
-                            <CheckCircle className="h-3 w-3 mr-1" />
-                            {pendingActions.has(order.supply_order_id) ? "..." : "Approve"}
+                    </TableCell>
+                    <TableCell>{order.order_timestamp ? new Date(order.order_timestamp).toLocaleDateString() : ""}</TableCell>
+                    <TableCell>{getStatusBadge(order.order_status)}</TableCell>
+                    <TableCell>{getPaymentBadge(order.payment_status)}</TableCell>
+                    <TableCell>
+                      <div>
+                        <div className="font-medium">${order.total_order_amount}</div>
+                        <div className="text-xs text-muted-foreground">Subtotal: ${order.subtotal_amount}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex space-x-2">
+                        {order.order_status?.toLowerCase() === "pending" ? (
+                          <>
+                            <Button
+                              size="sm"
+                              className="bg-green-600 hover:bg-green-700"
+                              onClick={() => handleApprove(order.supply_order_id)}
+                              disabled={pendingActions.has(order.supply_order_id)}
+                            >
+                              <CheckCircle className="h-3 w-3 mr-1" />
+                              {pendingActions.has(order.supply_order_id) ? "..." : "Approve"}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => handleDecline(order.supply_order_id)}
+                              disabled={pendingActions.has(order.supply_order_id)}
+                            >
+                              <XCircle className="h-3 w-3 mr-1" />
+                              {pendingActions.has(order.supply_order_id) ? "..." : "Decline"}
+                            </Button>
+                          </>
+                        ) : (
+                          <Button variant="ghost" size="sm">
+                            View Details
                           </Button>
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => handleDecline(order.supply_order_id)}
-                            disabled={pendingActions.has(order.supply_order_id)}
-                          >
-                            <XCircle className="h-3 w-3 mr-1" />
-                            {pendingActions.has(order.supply_order_id) ? "..." : "Decline"}
-                          </Button>
-                        </>
-                      ) : (
-                        <Button variant="ghost" size="sm">
-                          View Details
-                        </Button>
-                      )}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

@@ -99,9 +99,9 @@ export default function LaundromatsExplorePage() {
   const center = userLocation || { lat: 40.7128, lng: -74.006 }
 
   return (
-    <div className="flex flex-row w-full h-[90vh]">
+    <div className="flex flex-col md:flex-row w-full h-[90vh]">
       {/* List */}
-      <div className="w-full md:w-1/3 h-full overflow-y-auto border-r bg-white" ref={listRef}>
+      <div className="w-full md:w-1/3 h-1/2 md:h-full overflow-y-auto border-r bg-white" ref={listRef}>
         <div className="p-4 sticky top-0 z-10 bg-white border-b">
           <Input
             placeholder="Search by name or address..."
@@ -109,9 +109,9 @@ export default function LaundromatsExplorePage() {
             onChange={(e) => setSearch(e.target.value)}
             className="mb-2"
           />
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <Select value={borough} onValueChange={setBorough}>
-              <SelectTrigger className="w-1/2">
+              <SelectTrigger className="w-full sm:w-1/2">
                 <SelectValue placeholder="Filter by borough" />
               </SelectTrigger>
               <SelectContent>
@@ -122,7 +122,7 @@ export default function LaundromatsExplorePage() {
               </SelectContent>
             </Select>
             <Select value={rating} onValueChange={setRating}>
-              <SelectTrigger className="w-1/2">
+              <SelectTrigger className="w-full sm:w-1/2">
                 <SelectValue placeholder="Min. Rating" />
               </SelectTrigger>
               <SelectContent>
@@ -140,15 +140,15 @@ export default function LaundromatsExplorePage() {
             className={`p-4 border-b cursor-pointer transition bg-white ${selected && selected.laundromat_id === laundromat.laundromat_id ? "bg-blue-50" : ""}`}
             onClick={() => setSelected(laundromat)}
           >
-            <div className="font-bold text-lg mb-1">{laundromat.name}</div>
+            <div className="font-bold text-base md:text-lg mb-1">{laundromat.name}</div>
             {laundromat.photo_reference && (
               <img 
                 src={laundromat.photo_reference}
                 alt={laundromat.name} 
-                className="w-full h-32 object-cover rounded mb-2" 
+                className="w-full h-24 md:h-32 object-cover rounded mb-2" 
               />
             )}
-            <div className="text-sm text-muted-foreground mb-1">{laundromat.address}</div>
+            <div className="text-xs md:text-sm text-muted-foreground mb-1">{laundromat.address}</div>
             <div className="flex gap-2 text-xs">
               {laundromat.rating && <span>⭐ {laundromat.rating}</span>}
               {laundromat.borough && <span>{laundromat.borough}</span>}
@@ -157,7 +157,7 @@ export default function LaundromatsExplorePage() {
         ))}
       </div>
       {/* Map */}
-      <div className="flex-1 h-full">
+      <div className="flex-1 h-1/2 md:h-full">
         <GoogleMap
           mapContainerStyle={containerStyle}
           center={center}

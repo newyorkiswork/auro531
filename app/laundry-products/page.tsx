@@ -68,11 +68,11 @@ export default function LaundryProductsPage() {
   }, [products, searchQuery, sortBy])
 
   return (
-    <div className="p-4">
+    <div className="p-4 md:p-6 lg:p-8">
       {/* Header */}
       <div className="flex flex-col gap-4 mb-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-3xl font-bold tracking-tight">Laundry Products</h2>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Laundry Products</h2>
           <CartDrawer />
         </div>
 
@@ -91,14 +91,14 @@ export default function LaundryProductsPage() {
           <div className="relative">
             <button
               onClick={() => setIsFilterOpen(!isFilterOpen)}
-              className="flex items-center gap-2 px-4 py-2 rounded-md border bg-background hover:bg-muted transition-colors"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 rounded-md border bg-background hover:bg-muted transition-colors"
             >
               <SlidersHorizontal className="h-4 w-4" />
               <span>Sort by</span>
               <ChevronDown className={cn("h-4 w-4 transition-transform", isFilterOpen && "rotate-180")} />
             </button>
             {isFilterOpen && (
-              <div className="absolute right-0 mt-2 w-48 rounded-md border bg-background shadow-lg z-10">
+              <div className="absolute right-0 mt-2 w-full sm:w-48 rounded-md border bg-background shadow-lg z-10">
                 <div className="p-1">
                   {[
                     { value: "name-asc", label: "Name (A-Z)" },
@@ -135,7 +135,7 @@ export default function LaundryProductsPage() {
           <p className="text-lg text-muted-foreground">No products found</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
           {filteredProducts.map((product) => (
             <ProductCard
               key={product.api_product_id}

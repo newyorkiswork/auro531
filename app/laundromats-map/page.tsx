@@ -7,7 +7,7 @@ import { supabase } from "@/lib/supabase"
 
 const containerStyle = {
   width: "100%",
-  height: "80vh",
+  height: "calc(100vh - 200px)",
 }
 
 export default function LaundromatsMapPage() {
@@ -47,9 +47,9 @@ export default function LaundromatsMapPage() {
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
       <Card>
         <CardHeader>
-          <CardTitle>Laundromats Map</CardTitle>
+          <CardTitle className="text-xl md:text-2xl">Laundromats Map</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0 md:p-6">
           <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={12}>
             {userLocation && (
               <Marker
@@ -76,56 +76,56 @@ export default function LaundromatsMapPage() {
                 position={{ lat: typeof selected.latitude === "string" ? parseFloat(selected.latitude) : selected.latitude, lng: typeof selected.longitude === "string" ? parseFloat(selected.longitude) : selected.longitude }}
                 onCloseClick={() => setSelected(null)}
               >
-                <div style={{ maxWidth: 300 }}>
-                  <strong style={{ fontSize: 18 }}>{selected.name}</strong>
+                <div className="max-w-[280px] md:max-w-[300px] p-2">
+                  <strong className="text-base md:text-lg block">{selected.name}</strong>
                   {selected.photo_reference && (
                     <img
                       src={selected.photo_reference}
                       alt={selected.name}
-                      style={{ width: "100%", margin: "8px 0", borderRadius: 8, maxHeight: 160, objectFit: "cover" }}
+                      className="w-full my-2 rounded-lg max-h-32 md:max-h-40 object-cover"
                     />
                   )}
-                  <div style={{ marginBottom: 4 }}>{selected.address}</div>
+                  <div className="text-sm mb-1">{selected.address}</div>
                   {selected.rating && (
-                    <div style={{ marginBottom: 4 }}>
-                      <span style={{ color: "#fbbf24", fontWeight: "bold" }}>{selected.rating} ★</span>
+                    <div className="mb-1">
+                      <span className="text-yellow-500 font-bold">{selected.rating} ★</span>
                       {selected.total_user_ratings && (
-                        <span style={{ color: "#888", marginLeft: 4 }}>({selected.total_user_ratings} reviews)</span>
+                        <span className="text-gray-500 ml-1">({selected.total_user_ratings} reviews)</span>
                       )}
                     </div>
                   )}
                   {selected.phone && (
-                    <div>
-                      <a href={`tel:${selected.phone}`}>{selected.phone}</a>
+                    <div className="text-sm">
+                      <a href={`tel:${selected.phone}`} className="text-blue-600 hover:underline">{selected.phone}</a>
                     </div>
                   )}
                   {selected.hours_of_operation && (
-                    <div>
+                    <div className="text-sm">
                       <strong>Hours:</strong> {selected.hours_of_operation}
                     </div>
                   )}
-                  {selected.borough && <div>Borough: {selected.borough}</div>}
+                  {selected.borough && <div className="text-sm">Borough: {selected.borough}</div>}
                   {selected.accessible !== undefined && (
-                    <div>Accessible: {selected.accessible ? "Yes" : "No"}</div>
+                    <div className="text-sm">Accessible: {selected.accessible ? "Yes" : "No"}</div>
                   )}
                   {selected.top_review_text && (
-                    <div style={{ marginTop: 8, fontStyle: "italic" }}>
-                      “{selected.top_review_text}”
+                    <div className="mt-2 text-sm italic">
+                      "{selected.top_review_text}"
                       {selected.top_review_author && (
-                        <div style={{ fontWeight: "bold", fontSize: 12, marginTop: 2 }}>- {selected.top_review_author}</div>
+                        <div className="font-bold text-xs mt-1">- {selected.top_review_author}</div>
                       )}
                       {selected.top_review_rating && (
-                        <div style={{ color: "#fbbf24", fontSize: 12 }}>{selected.top_review_rating} ★</div>
+                        <div className="text-yellow-500 text-xs">{selected.top_review_rating} ★</div>
                       )}
                     </div>
                   )}
                   {selected.google_maps_url && (
-                    <div style={{ marginTop: 8 }}>
+                    <div className="mt-2">
                       <a
                         href={selected.google_maps_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        style={{ color: "#1a73e8", textDecoration: "underline" }}
+                        className="text-blue-600 hover:underline text-sm"
                       >
                         Directions
                       </a>

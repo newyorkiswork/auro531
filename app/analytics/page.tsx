@@ -84,35 +84,35 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <h1 className="text-3xl font-bold tracking-tight">Analytics Dashboard</h1>
+    <div className="container mx-auto p-4 sm:p-6 space-y-6 w-full">
+      <h1 className="text-3xl font-bold tracking-tight text-center sm:text-left">Analytics Dashboard</h1>
       
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
+      <Tabs defaultValue="overview" className="space-y-4 w-full">
+        <TabsList className="flex flex-col sm:flex-row space-y-2 sm:space-x-4 sm:space-y-0 w-full">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="machines">Machines</TabsTrigger>
           <TabsTrigger value="revenue">Revenue</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Card className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card className="p-6 w-full">
               <h3 className="text-sm font-medium text-gray-500">Total Machines</h3>
               <p className="text-2xl font-bold">{machineStats?.reduce((acc: number, curr: any) => acc + curr.value, 0)}</p>
             </Card>
-            <Card className="p-6">
+            <Card className="p-6 w-full">
               <h3 className="text-sm font-medium text-gray-500">Total Revenue</h3>
               <p className="text-2xl font-bold">
                 ${revenueStats?.reduce((acc: number, curr: any) => acc + curr.revenue, 0).toFixed(2)}
               </p>
             </Card>
-            <Card className="p-6">
+            <Card className="p-6 w-full">
               <h3 className="text-sm font-medium text-gray-500">Available Machines</h3>
               <p className="text-2xl font-bold">
                 {machineStats?.find((stat: any) => stat.name === 'Available')?.value || 0}
               </p>
             </Card>
-            <Card className="p-6">
+            <Card className="p-6 w-full">
               <h3 className="text-sm font-medium text-gray-500">In Use Machines</h3>
               <p className="text-2xl font-bold">
                 {machineStats?.find((stat: any) => stat.name === 'In Use')?.value || 0}
@@ -122,9 +122,9 @@ export default function AnalyticsPage() {
         </TabsContent>
 
         <TabsContent value="machines" className="space-y-4">
-          <Card className="p-6">
+          <Card className="p-6 w-full">
             <h3 className="text-lg font-medium mb-4">Machine Status Distribution</h3>
-            <div className="h-[400px]">
+            <div className="h-[300px] sm:h-[400px] w-full overflow-x-auto">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -133,7 +133,7 @@ export default function AnalyticsPage() {
                     cy="50%"
                     labelLine={false}
                     label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
-                    outerRadius={150}
+                    outerRadius={120}
                     fill="#8884d8"
                     dataKey="value"
                   >
@@ -149,9 +149,9 @@ export default function AnalyticsPage() {
         </TabsContent>
 
         <TabsContent value="revenue" className="space-y-4">
-          <Card className="p-6">
+          <Card className="p-6 w-full">
             <h3 className="text-lg font-medium mb-4">Revenue by Machine Type</h3>
-            <div className="h-[400px]">
+            <div className="h-[300px] sm:h-[400px] w-full overflow-x-auto">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={revenueStats}>
                   <CartesianGrid strokeDasharray="3 3" />
