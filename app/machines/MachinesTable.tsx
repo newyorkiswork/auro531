@@ -78,8 +78,8 @@ export default function MachinesTable({ machines }: { machines: any[] }) {
           <TableHeader>
             <TableRow>
               <TableHead>Machine ID</TableHead>
-              <TableHead>Laundromat</TableHead>
-              <TableHead>Type</TableHead>
+              <TableHead className="hidden md:table-cell">Laundromat</TableHead>
+              <TableHead className="hidden sm:table-cell">Type</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
@@ -88,8 +88,8 @@ export default function MachinesTable({ machines }: { machines: any[] }) {
             {filtered.map((machine) => (
               <TableRow key={machine.machine_id}>
                 <TableCell className="font-medium">{machine.machine_id}</TableCell>
-                <TableCell>{machine.participating_laundromats?.name || machine.laundromat_id}</TableCell>
-                <TableCell>{machine.machine_type || '-'}</TableCell>
+                <TableCell className="hidden md:table-cell">{machine.participating_laundromats?.name || machine.laundromat_id}</TableCell>
+                <TableCell className="hidden sm:table-cell">{machine.machine_type || '-'}</TableCell>
                 <TableCell>{getStatusBadge(machine.current_status)}</TableCell>
                 <TableCell>
                   <MachineEditDialog machine={machine} />

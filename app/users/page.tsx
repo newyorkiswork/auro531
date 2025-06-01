@@ -11,11 +11,13 @@ import { Users, Search, ChevronDown, ChevronRight, Mail, Phone, MapPin, Calendar
 import AddUserDialog from "./AddUserDialog"
 import { supabase } from "@/lib/supabase"
 import React from "react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 
 export default function UsersPage() {
   const [users, setUsers] = useState<any[]>([])
   const [expandedUsers, setExpandedUsers] = useState<Set<string>>(new Set())
   const [loading, setLoading] = useState(true)
+  const [selectedUser, setSelectedUser] = useState<any | null>(null)
 
   useEffect(() => {
     async function loadData() {
@@ -134,12 +136,12 @@ export default function UsersPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[50px]" />
+                  <TableHead className="w-[50px] hidden sm:table-cell" />
                   <TableHead>User</TableHead>
-                  <TableHead>Contact</TableHead>
-                  <TableHead>Address</TableHead>
+                  <TableHead className="hidden md:table-cell">Contact</TableHead>
+                  <TableHead className="hidden md:table-cell">Address</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Last Login</TableHead>
+                  <TableHead className="hidden lg:table-cell">Last Login</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -149,7 +151,7 @@ export default function UsersPage() {
                   return (
                     <React.Fragment key={user.user_id}>
                       <TableRow key={user.user_id}>
-                        <TableCell>
+                        <TableCell className="hidden sm:table-cell">
                           <Button variant="ghost" size="sm" onClick={() => toggleUserExpansion(user.user_id)}>
                             {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                           </Button>
@@ -161,7 +163,7 @@ export default function UsersPage() {
                             <div className="text-sm text-muted-foreground">Role: {user.user_role || user.role}</div>
                           </div>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="hidden md:table-cell">
                           <div className="space-y-1">
                             <div className="flex items-center text-sm">
                               <Phone className="h-3 w-3 mr-1" />
@@ -173,7 +175,7 @@ export default function UsersPage() {
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="hidden md:table-cell">
                           <div className="text-sm">
                             <div className="flex items-center">
                               <MapPin className="h-3 w-3 mr-1" />
@@ -187,7 +189,7 @@ export default function UsersPage() {
                           </div>
                         </TableCell>
                         <TableCell>{getStatusBadge(user.account_status || user.status)}</TableCell>
-                        <TableCell>
+                        <TableCell className="hidden lg:table-cell">
                           <div className="text-sm text-muted-foreground">
                             {user.last_login_timestamp || user.last_login ? (
                               <div className="flex items-center">
@@ -201,12 +203,100 @@ export default function UsersPage() {
                         </TableCell>
                         <TableCell>
                           <div className="flex space-x-2">
-                            <Button variant="ghost" size="sm">
-                              Edit
-                            </Button>
-                            <Button variant="ghost" size="sm">
-                              Message
-                            </Button>
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button variant="ghost" size="sm" onClick={() => setSelectedUser(user)}>
+                                  View Details
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>Edit User Details</DialogTitle>
+                                </DialogHeader>
+                                {selectedUser && (
+                                  <form
+                                    className="space-y-2"
+                                    onSubmit={async (e) => {
+                                      e.preventDefault();
+                                      // Save logic here (e.g., call supabase update)
+                                      // Optionally show a loading state or success message
+                                    }}
+                                  >
+                                    <div>
+                                      <label className="block text-sm font-medium">Name</label>
+                                      <input
+                                        className="w-full border rounded px-2 py-1"
+                                        value={selectedUser.full_name || `${selectedUser.first_name || ""} ${selectedUser.last_name || ""}`}
+                                        onChange={e => setSelectedUser({ ...selectedUser, full_name: e.target.value })}
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-sm font-medium">Email</label>
+                                      <input
+                                        className="w-full border rounded px-2 py-1"
+                                        value={selectedUser.email}
+                                        onChange={e => setSelectedUser({ ...selectedUser, email: e.target.value })}
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-sm font-medium">Phone</label>
+                                      <input
+                                        className="w-full border rounded px-2 py-1"
+                                        value={selectedUser.phone_number || selectedUser.phone}
+                                        onChange={e => setSelectedUser({ ...selectedUser, phone_number: e.target.value })}
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-sm font-medium">Role</label>
+                                      <input
+                                        className="w-full border rounded px-2 py-1"
+                                        value={selectedUser.user_role || selectedUser.role}
+                                        onChange={e => setSelectedUser({ ...selectedUser, user_role: e.target.value })}
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-sm font-medium">Status</label>
+                                      <input
+                                        className="w-full border rounded px-2 py-1"
+                                        value={selectedUser.account_status || selectedUser.status}
+                                        onChange={e => setSelectedUser({ ...selectedUser, account_status: e.target.value })}
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-sm font-medium">Address</label>
+                                      <input
+                                        className="w-full border rounded px-2 py-1"
+                                        value={selectedUser.default_pickup_address_street || selectedUser.address}
+                                        onChange={e => setSelectedUser({ ...selectedUser, default_pickup_address_street: e.target.value })}
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-sm font-medium">City/State/Zip</label>
+                                      <input
+                                        className="w-full border rounded px-2 py-1"
+                                        value={[
+                                          selectedUser.default_pickup_address_city,
+                                          selectedUser.default_pickup_address_state,
+                                          selectedUser.default_pickup_address_zip
+                                        ].filter(Boolean).join(", ")}
+                                        onChange={e => {
+                                          const [city, state, zip] = e.target.value.split(",").map(s => s.trim())
+                                          setSelectedUser({
+                                            ...selectedUser,
+                                            default_pickup_address_city: city,
+                                            default_pickup_address_state: state,
+                                            default_pickup_address_zip: zip
+                                          })
+                                        }}
+                                      />
+                                    </div>
+                                    <div className="flex justify-end pt-2">
+                                      <button type="submit" className="bg-primary text-white px-4 py-2 rounded">Save</button>
+                                    </div>
+                                  </form>
+                                )}
+                              </DialogContent>
+                            </Dialog>
                           </div>
                         </TableCell>
                       </TableRow>

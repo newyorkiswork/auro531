@@ -1,3 +1,5 @@
+"use client"
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
@@ -7,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Calendar, Search, Clock, DollarSign, MapPin } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import AddBookingDialog from "./AddBookingDialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { useState } from "react"
 
 export default async function BookingsPage() {
   const { data: bookings, error } = await supabase
@@ -71,6 +75,8 @@ export default async function BookingsPage() {
 
   // Sort dates in descending order
   const sortedDates = Object.keys(grouped).sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
+
+  const [selectedBooking, setSelectedBooking] = useState<any | null>(null)
 
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -157,7 +163,7 @@ export default async function BookingsPage() {
 
           {/* Bookings grouped by date */}
           <div className="space-y-6">
-            {sortedDates.slice(0, 7).map((date) => (
+            {sortedDates.slice(0, 7).map((date: string) => (
               <div key={date}>
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-lg font-semibold">{date}</h3>
@@ -169,51 +175,112 @@ export default async function BookingsPage() {
                     <TableHeader>
                       <TableRow>
                         <TableHead>Booking ID</TableHead>
-                        <TableHead>Customer</TableHead>
-                        <TableHead>Service</TableHead>
-                        <TableHead>Location</TableHead>
+                        <TableHead className="hidden md:table-cell">Customer</TableHead>
+                        <TableHead className="hidden md:table-cell">Service</TableHead>
+                        <TableHead className="hidden md:table-cell">Location</TableHead>
                         <TableHead>Status</TableHead>
-                        <TableHead>Payment</TableHead>
-                        <TableHead>Amount</TableHead>
+                        <TableHead className="hidden sm:table-cell">Payment</TableHead>
+                        <TableHead className="hidden md:table-cell">Amount</TableHead>
                         <TableHead>Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {grouped[date].map((booking) => (
+                      {grouped[date].map((booking: any) => (
                         <TableRow key={booking.booking_id}>
                           <TableCell className="font-medium">{booking.booking_id}</TableCell>
-                          <TableCell>
+                          <TableCell className="hidden md:table-cell">
                             <div>
                               <div className="font-medium">{booking.user_full_name_snapshot}</div>
                               <div className="text-sm text-muted-foreground">{booking.user_phone_snapshot}</div>
                             </div>
                           </TableCell>
-                          <TableCell>{booking.service_name_snapshot}</TableCell>
-                          <TableCell>
+                          <TableCell className="hidden md:table-cell">{booking.service_name_snapshot}</TableCell>
+                          <TableCell className="hidden md:table-cell">
                             <div className="flex items-center">
                               <MapPin className="h-3 w-3 mr-1" />
                               <span className="truncate max-w-[200px]">{booking.laundromat_name_snapshot}</span>
                             </div>
                           </TableCell>
                           <TableCell>{getStatusBadge(booking.current_booking_status)}</TableCell>
-                          <TableCell>{getPaymentBadge(booking.payment_status)}</TableCell>
-                          <TableCell>
-                            <div>
-                              <div className="font-medium">${booking.actual_cost || booking.estimated_cost}</div>
-                              {booking.actual_cost && booking.actual_cost !== booking.estimated_cost && (
-                                <div className="text-xs text-muted-foreground">Est: ${booking.estimated_cost}</div>
-                              )}
-                            </div>
+                          <TableCell className="hidden sm:table-cell">{getPaymentBadge(booking.payment_status)}</TableCell>
+                          <TableCell className="hidden md:table-cell">
+                            ${booking.actual_cost || booking.estimated_cost || "0.00"}
                           </TableCell>
                           <TableCell>
-                            <div className="flex space-x-2">
-                              <Button variant="ghost" size="sm">
-                                View
-                              </Button>
-                              <Button variant="ghost" size="sm">
-                                Edit
-                              </Button>
-                            </div>
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button variant="ghost" size="sm" onClick={() => setSelectedBooking(booking)}>
+                                  View/Edit Details
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>Edit Booking Details</DialogTitle>
+                                </DialogHeader>
+                                {selectedBooking && (
+                                  <form
+                                    className="space-y-2"
+                                    onSubmit={async (e) => {
+                                      e.preventDefault();
+                                      // Save logic here (e.g., call supabase update)
+                                      // Optionally show a loading state or success message
+                                    }}
+                                  >
+                                    <div>
+                                      <label className="block text-sm font-medium">Customer Name</label>
+                                      <input
+                                        className="w-full border rounded px-2 py-1"
+                                        value={selectedBooking.user_full_name_snapshot}
+                                        onChange={e => setSelectedBooking({ ...selectedBooking, user_full_name_snapshot: e.target.value })}
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-sm font-medium">Phone</label>
+                                      <input
+                                        className="w-full border rounded px-2 py-1"
+                                        value={selectedBooking.user_phone_snapshot}
+                                        onChange={e => setSelectedBooking({ ...selectedBooking, user_phone_snapshot: e.target.value })}
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-sm font-medium">Service</label>
+                                      <input
+                                        className="w-full border rounded px-2 py-1"
+                                        value={selectedBooking.service_name_snapshot}
+                                        onChange={e => setSelectedBooking({ ...selectedBooking, service_name_snapshot: e.target.value })}
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-sm font-medium">Status</label>
+                                      <input
+                                        className="w-full border rounded px-2 py-1"
+                                        value={selectedBooking.current_booking_status}
+                                        onChange={e => setSelectedBooking({ ...selectedBooking, current_booking_status: e.target.value })}
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-sm font-medium">Payment Status</label>
+                                      <input
+                                        className="w-full border rounded px-2 py-1"
+                                        value={selectedBooking.payment_status}
+                                        onChange={e => setSelectedBooking({ ...selectedBooking, payment_status: e.target.value })}
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-sm font-medium">Amount</label>
+                                      <input
+                                        className="w-full border rounded px-2 py-1"
+                                        value={selectedBooking.actual_cost || selectedBooking.estimated_cost || "0.00"}
+                                        onChange={e => setSelectedBooking({ ...selectedBooking, actual_cost: e.target.value })}
+                                      />
+                                    </div>
+                                    <div className="flex justify-end pt-2">
+                                      <button type="submit" className="bg-primary text-white px-4 py-2 rounded">Save</button>
+                                    </div>
+                                  </form>
+                                )}
+                              </DialogContent>
+                            </Dialog>
                           </TableCell>
                         </TableRow>
                       ))}

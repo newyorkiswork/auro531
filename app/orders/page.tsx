@@ -7,14 +7,38 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Package, Search, DollarSign, Clock, CheckCircle, XCircle, MapPin } from "lucide-react"
+import { Package, Search, DollarSign, Clock, CheckCircle, XCircle, MapPin, Eye } from "lucide-react"
 import AddOrderDialog from "./AddOrderDialog"
 import { supabase } from "@/lib/supabase"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+
+interface OrderItem {
+  name: string
+  quantity: number
+  price: string
+}
+
+interface Order {
+  supply_order_id: string
+  order_timestamp: string
+  order_status: string
+  total_order_amount: string
+  items: OrderItem[]
+  user_full_name_snapshot?: string
+  user_id?: string
+  delivery_address_street?: string
+  delivery_address_city?: string
+  delivery_address_state?: string
+  delivery_address_zip?: string
+  payment_status?: string
+  subtotal_amount?: string
+}
 
 export default function OrdersPage() {
-  const [orders, setOrders] = useState<any[]>([])
+  const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
   const [pendingActions, setPendingActions] = useState<Set<string>>(new Set())
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
 
   useEffect(() => {
     async function loadOrders() {
@@ -113,6 +137,57 @@ export default function OrdersPage() {
   const approvedOrders = orders.filter((o) => o.order_status?.toLowerCase() === "approved").length
   const totalRevenue = orders.reduce((sum, o) => sum + Number.parseFloat(o.total_order_amount || "0"), 0)
 
+  function OrderDetails({ order }: { order: Order }) {
+    return (
+      <div className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <h3 className="font-semibold text-sm text-muted-foreground">Order ID</h3>
+            <p>{order.supply_order_id}</p>
+          </div>
+          <div>
+            <h3 className="font-semibold text-sm text-muted-foreground">Date</h3>
+            <p>{order.order_timestamp ? new Date(order.order_timestamp).toLocaleDateString() : ""}</p>
+          </div>
+          <div>
+            <h3 className="font-semibold text-sm text-muted-foreground">Status</h3>
+            <Badge variant={order.order_status === "Delivered" ? "default" : "secondary"}>
+              {order.order_status}
+            </Badge>
+          </div>
+          <div>
+            <h3 className="font-semibold text-sm text-muted-foreground">Total</h3>
+            <p>${Number.parseFloat(order.total_order_amount || "0").toLocaleString()}</p>
+          </div>
+        </div>
+        
+        <div className="mt-6">
+          <h3 className="font-semibold text-sm text-muted-foreground mb-2">Items</h3>
+          <div className="border rounded-lg">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Item</TableHead>
+                  <TableHead>Quantity</TableHead>
+                  <TableHead className="text-right">Price</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {order.items.map((item: OrderItem, index: number) => (
+                  <TableRow key={index}>
+                    <TableCell>{item.name}</TableCell>
+                    <TableCell>{item.quantity}</TableCell>
+                    <TableCell className="text-right">${Number.parseFloat(item.price || "0").toLocaleString()}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
       <div className="flex items-center justify-between">
@@ -202,12 +277,12 @@ export default function OrdersPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Order ID</TableHead>
-                  <TableHead>Customer</TableHead>
-                  <TableHead>Delivery Address</TableHead>
-                  <TableHead>Order Date</TableHead>
+                  <TableHead className="hidden md:table-cell">Customer</TableHead>
+                  <TableHead className="hidden md:table-cell">Delivery Address</TableHead>
+                  <TableHead className="hidden sm:table-cell">Order Date</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Payment</TableHead>
-                  <TableHead>Amount</TableHead>
+                  <TableHead className="hidden sm:table-cell">Payment</TableHead>
+                  <TableHead className="hidden md:table-cell">Amount</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -215,13 +290,13 @@ export default function OrdersPage() {
                 {orders.map((order) => (
                   <TableRow key={order.supply_order_id}>
                     <TableCell className="font-medium">{order.supply_order_id}</TableCell>
-                    <TableCell>
+                    <TableCell className="hidden md:table-cell">
                       <div>
                         <div className="font-medium">{order.user_full_name_snapshot}</div>
                         <div className="text-sm text-muted-foreground">ID: {order.user_id}</div>
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden md:table-cell">
                       <div className="flex items-start">
                         <MapPin className="h-3 w-3 mr-1 mt-0.5 flex-shrink-0" />
                         <div className="text-sm">
@@ -232,44 +307,74 @@ export default function OrdersPage() {
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell>{order.order_timestamp ? new Date(order.order_timestamp).toLocaleDateString() : ""}</TableCell>
+                    <TableCell className="hidden sm:table-cell">{order.order_timestamp ? new Date(order.order_timestamp).toLocaleDateString() : ""}</TableCell>
                     <TableCell>{getStatusBadge(order.order_status)}</TableCell>
-                    <TableCell>{getPaymentBadge(order.payment_status)}</TableCell>
-                    <TableCell>
+                    <TableCell className="hidden sm:table-cell">{getPaymentBadge(order.payment_status)}</TableCell>
+                    <TableCell className="hidden md:table-cell">
                       <div>
                         <div className="font-medium">${order.total_order_amount}</div>
-                        <div className="text-xs text-muted-foreground">Subtotal: ${order.subtotal_amount}</div>
+                        <div className="text-xs text-muted-foreground">Subtotal: ${order.subtotal_amount || "0.00"}</div>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="flex space-x-2">
-                        {order.order_status?.toLowerCase() === "pending" ? (
-                          <>
-                            <Button
-                              size="sm"
-                              className="bg-green-600 hover:bg-green-700"
-                              onClick={() => handleApprove(order.supply_order_id)}
-                              disabled={pendingActions.has(order.supply_order_id)}
-                            >
-                              <CheckCircle className="h-3 w-3 mr-1" />
-                              {pendingActions.has(order.supply_order_id) ? "..." : "Approve"}
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="destructive"
-                              onClick={() => handleDecline(order.supply_order_id)}
-                              disabled={pendingActions.has(order.supply_order_id)}
-                            >
-                              <XCircle className="h-3 w-3 mr-1" />
-                              {pendingActions.has(order.supply_order_id) ? "..." : "Decline"}
-                            </Button>
-                          </>
-                        ) : (
-                          <Button variant="ghost" size="sm">
-                            View Details
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="ghost" size="icon" onClick={() => setSelectedOrder(order)}>
+                            <Eye className="h-4 w-4" />
                           </Button>
-                        )}
-                      </div>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Edit Order Details</DialogTitle>
+                          </DialogHeader>
+                          {selectedOrder && (
+                            <form
+                              className="space-y-2"
+                              onSubmit={async (e) => {
+                                e.preventDefault();
+                                // Save logic here (e.g., call supabase update)
+                                // Optionally show a loading state or success message
+                              }}
+                            >
+                              <div>
+                                <label className="block text-sm font-medium">Order ID</label>
+                                <input
+                                  className="w-full border rounded px-2 py-1"
+                                  value={selectedOrder.supply_order_id}
+                                  onChange={e => setSelectedOrder({ ...selectedOrder, supply_order_id: e.target.value })}
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium">Status</label>
+                                <input
+                                  className="w-full border rounded px-2 py-1"
+                                  value={selectedOrder.order_status}
+                                  onChange={e => setSelectedOrder({ ...selectedOrder, order_status: e.target.value })}
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium">Total Amount</label>
+                                <input
+                                  className="w-full border rounded px-2 py-1"
+                                  value={selectedOrder.total_order_amount}
+                                  onChange={e => setSelectedOrder({ ...selectedOrder, total_order_amount: e.target.value })}
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium">Payment Status</label>
+                                <input
+                                  className="w-full border rounded px-2 py-1"
+                                  value={selectedOrder.payment_status}
+                                  onChange={e => setSelectedOrder({ ...selectedOrder, payment_status: e.target.value })}
+                                />
+                              </div>
+                              <div className="flex justify-end pt-2">
+                                <button type="submit" className="bg-primary text-white px-4 py-2 rounded">Save</button>
+                              </div>
+                            </form>
+                          )}
+                        </DialogContent>
+                      </Dialog>
                     </TableCell>
                   </TableRow>
                 ))}

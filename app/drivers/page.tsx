@@ -11,10 +11,12 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Truck, Search, Phone, Mail, Calendar } from "lucide-react"
 import AddDriverDialog from "./AddDriverDialog"
 import { supabase } from "@/lib/supabase"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 
 export default function DriversPage() {
   const [drivers, setDrivers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [selectedDriver, setSelectedDriver] = useState<any | null>(null)
 
   useEffect(() => {
     async function fetchDrivers() {
@@ -144,20 +146,20 @@ export default function DriversPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Active</TableHead>
+                  <TableHead className="hidden sm:table-cell">Active</TableHead>
                   <TableHead>Driver</TableHead>
-                  <TableHead>Contact</TableHead>
-                  <TableHead>Vehicle</TableHead>
+                  <TableHead className="hidden md:table-cell">Contact</TableHead>
+                  <TableHead className="hidden md:table-cell">Vehicle</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Registered</TableHead>
-                  <TableHead>Last Update</TableHead>
+                  <TableHead className="hidden lg:table-cell">Registered</TableHead>
+                  <TableHead className="hidden lg:table-cell">Last Update</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {drivers.map((driver) => (
                   <TableRow key={driver.driver_id}>
-                    <TableCell>
+                    <TableCell className="hidden sm:table-cell">
                       <Checkbox
                         checked={driver.is_active}
                         aria-label={`Toggle ${driver.full_name} availability`}
@@ -169,7 +171,7 @@ export default function DriversPage() {
                         <div className="text-sm text-muted-foreground">ID: {driver.driver_id}</div>
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden md:table-cell">
                       <div className="space-y-1">
                         <div className="flex items-center text-sm">
                           <Phone className="h-3 w-3 mr-1" />
@@ -181,33 +183,99 @@ export default function DriversPage() {
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden md:table-cell">
                       <div>
                         <div className="font-medium">{driver.vehicle_type}</div>
                         <div className="text-sm text-muted-foreground">{driver.license_plate}</div>
                       </div>
                     </TableCell>
                     <TableCell>{getStatusBadge(driver.current_status || "")}</TableCell>
-                    <TableCell>
+                    <TableCell className="hidden lg:table-cell">
                       <div className="flex items-center text-sm text-muted-foreground">
                         <Calendar className="h-3 w-3 mr-1" />
                         {driver.date_registered ? new Date(driver.date_registered).toLocaleDateString() : ""}
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden lg:table-cell">
                       <div className="text-sm text-muted-foreground">
                         {driver.last_status_update ? new Date(driver.last_status_update).toLocaleString() : ""}
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="flex space-x-2">
-                        <Button variant="ghost" size="sm">
-                          View Profile
-                        </Button>
-                        <Button variant="ghost" size="sm">
-                          Message
-                        </Button>
-                      </div>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="ghost" size="sm" onClick={() => setSelectedDriver(driver)}>
+                            View/Edit Details
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Edit Driver Details</DialogTitle>
+                          </DialogHeader>
+                          {selectedDriver && (
+                            <form
+                              className="space-y-2"
+                              onSubmit={async (e) => {
+                                e.preventDefault();
+                                // Save logic here (e.g., call supabase update)
+                                // Optionally show a loading state or success message
+                              }}
+                            >
+                              <div>
+                                <label className="block text-sm font-medium">Name</label>
+                                <input
+                                  className="w-full border rounded px-2 py-1"
+                                  value={selectedDriver.full_name}
+                                  onChange={e => setSelectedDriver({ ...selectedDriver, full_name: e.target.value })}
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium">Email</label>
+                                <input
+                                  className="w-full border rounded px-2 py-1"
+                                  value={selectedDriver.email}
+                                  onChange={e => setSelectedDriver({ ...selectedDriver, email: e.target.value })}
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium">Phone</label>
+                                <input
+                                  className="w-full border rounded px-2 py-1"
+                                  value={selectedDriver.phone_number}
+                                  onChange={e => setSelectedDriver({ ...selectedDriver, phone_number: e.target.value })}
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium">Vehicle Type</label>
+                                <input
+                                  className="w-full border rounded px-2 py-1"
+                                  value={selectedDriver.vehicle_type}
+                                  onChange={e => setSelectedDriver({ ...selectedDriver, vehicle_type: e.target.value })}
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium">License Plate</label>
+                                <input
+                                  className="w-full border rounded px-2 py-1"
+                                  value={selectedDriver.license_plate}
+                                  onChange={e => setSelectedDriver({ ...selectedDriver, license_plate: e.target.value })}
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium">Status</label>
+                                <input
+                                  className="w-full border rounded px-2 py-1"
+                                  value={selectedDriver.current_status}
+                                  onChange={e => setSelectedDriver({ ...selectedDriver, current_status: e.target.value })}
+                                />
+                              </div>
+                              <div className="flex justify-end pt-2">
+                                <button type="submit" className="bg-primary text-white px-4 py-2 rounded">Save</button>
+                              </div>
+                            </form>
+                          )}
+                        </DialogContent>
+                      </Dialog>
                     </TableCell>
                   </TableRow>
                 ))}
