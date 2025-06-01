@@ -133,81 +133,81 @@ export default function UsersPage() {
           </div>
 
           <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
+          <Table>
+            <TableHeader>
+              <TableRow>
                   <TableHead className="w-[50px] hidden sm:table-cell" />
-                  <TableHead>User</TableHead>
+                <TableHead>User</TableHead>
                   <TableHead className="hidden md:table-cell">Contact</TableHead>
                   <TableHead className="hidden md:table-cell">Address</TableHead>
-                  <TableHead>Status</TableHead>
+                <TableHead>Status</TableHead>
                   <TableHead className="hidden lg:table-cell">Last Login</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {users.slice(0, 20).map((user) => {
-                  const isExpanded = expandedUsers.has(user.user_id)
-                  return (
-                    <React.Fragment key={user.user_id}>
-                      <TableRow key={user.user_id}>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {users.slice(0, 20).map((user) => {
+                const isExpanded = expandedUsers.has(user.user_id)
+                return (
+                  <React.Fragment key={user.user_id}>
+                    <TableRow key={user.user_id}>
                         <TableCell className="hidden sm:table-cell">
-                          <Button variant="ghost" size="sm" onClick={() => toggleUserExpansion(user.user_id)}>
-                            {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                          </Button>
-                        </TableCell>
-                        <TableCell>
-                          <div>
-                            <div className="font-medium">{user.full_name || `${user.first_name || ""} ${user.last_name || ""}`}</div>
-                            <div className="text-sm text-muted-foreground">ID: {user.user_id}</div>
-                            <div className="text-sm text-muted-foreground">Role: {user.user_role || user.role}</div>
-                          </div>
-                        </TableCell>
+                        <Button variant="ghost" size="sm" onClick={() => toggleUserExpansion(user.user_id)}>
+                          {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                        </Button>
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">{user.full_name || `${user.first_name || ""} ${user.last_name || ""}`}</div>
+                          <div className="text-sm text-muted-foreground">ID: {user.user_id}</div>
+                          <div className="text-sm text-muted-foreground">Role: {user.user_role || user.role}</div>
+                        </div>
+                      </TableCell>
                         <TableCell className="hidden md:table-cell">
-                          <div className="space-y-1">
-                            <div className="flex items-center text-sm">
-                              <Phone className="h-3 w-3 mr-1" />
-                              {user.phone_number || user.phone}
-                            </div>
-                            <div className="flex items-center text-sm text-muted-foreground">
-                              <Mail className="h-3 w-3 mr-1" />
-                              {user.email}
-                            </div>
+                        <div className="space-y-1">
+                          <div className="flex items-center text-sm">
+                            <Phone className="h-3 w-3 mr-1" />
+                            {user.phone_number || user.phone}
                           </div>
-                        </TableCell>
+                          <div className="flex items-center text-sm text-muted-foreground">
+                            <Mail className="h-3 w-3 mr-1" />
+                            {user.email}
+                          </div>
+                        </div>
+                      </TableCell>
                         <TableCell className="hidden md:table-cell">
-                          <div className="text-sm">
-                            <div className="flex items-center">
-                              <MapPin className="h-3 w-3 mr-1" />
-                              {user.default_pickup_address_street || user.address}
-                            </div>
-                            {(user.default_pickup_address_city || user.default_pickup_address_state || user.default_pickup_address_zip) && (
-                              <div className="text-muted-foreground text-xs">
-                                {[user.default_pickup_address_city, user.default_pickup_address_state, user.default_pickup_address_zip].filter(Boolean).join(", ")}
-                              </div>
-                            )}
+                        <div className="text-sm">
+                          <div className="flex items-center">
+                            <MapPin className="h-3 w-3 mr-1" />
+                            {user.default_pickup_address_street || user.address}
                           </div>
-                        </TableCell>
-                        <TableCell>{getStatusBadge(user.account_status || user.status)}</TableCell>
+                          {(user.default_pickup_address_city || user.default_pickup_address_state || user.default_pickup_address_zip) && (
+                            <div className="text-muted-foreground text-xs">
+                              {[user.default_pickup_address_city, user.default_pickup_address_state, user.default_pickup_address_zip].filter(Boolean).join(", ")}
+                            </div>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>{getStatusBadge(user.account_status || user.status)}</TableCell>
                         <TableCell className="hidden lg:table-cell">
-                          <div className="text-sm text-muted-foreground">
-                            {user.last_login_timestamp || user.last_login ? (
-                              <div className="flex items-center">
-                                <Calendar className="h-3 w-3 mr-1" />
-                                {new Date(user.last_login_timestamp || user.last_login).toLocaleDateString()}
-                              </div>
-                            ) : (
-                              "Never"
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex space-x-2">
+                        <div className="text-sm text-muted-foreground">
+                          {user.last_login_timestamp || user.last_login ? (
+                            <div className="flex items-center">
+                              <Calendar className="h-3 w-3 mr-1" />
+                              {new Date(user.last_login_timestamp || user.last_login).toLocaleDateString()}
+                            </div>
+                          ) : (
+                            "Never"
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex space-x-2">
                             <Dialog>
                               <DialogTrigger asChild>
                                 <Button variant="ghost" size="sm" onClick={() => setSelectedUser(user)}>
                                   View Details
-                                </Button>
+                          </Button>
                               </DialogTrigger>
                               <DialogContent>
                                 <DialogHeader>
@@ -297,15 +297,15 @@ export default function UsersPage() {
                                 )}
                               </DialogContent>
                             </Dialog>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                      {/* Expanded row for future details if needed */}
-                    </React.Fragment>
-                  )
-                })}
-              </TableBody>
-            </Table>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                    {/* Expanded row for future details if needed */}
+                  </React.Fragment>
+                )
+              })}
+            </TableBody>
+          </Table>
           </div>
         </CardContent>
       </Card>
