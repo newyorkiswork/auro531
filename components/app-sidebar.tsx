@@ -74,11 +74,9 @@ const menuItems = [
 
 export function AppSidebar() {
   return (
-    <Sidebar>
-      <SidebarHeader className="border-b border-sidebar-border">
-        <div className="flex items-center gap-2 px-4 py-2">
-          <Image src="/logo-horizontal.png" alt="Auro Logo" width={120} height={40} priority />
-        </div>
+    <aside className="hidden md:flex md:flex-col md:w-56 md:fixed md:inset-y-0 bg-gradient-to-b from-blue-50 to-white border-r shadow-lg z-40">
+      <SidebarHeader className="border-b border-sidebar-border py-6 flex flex-col items-center">
+        <Image src="/logo-horizontal.png" alt="Auro Logo" width={120} height={40} priority className="mb-2" />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -88,8 +86,8 @@ export function AppSidebar() {
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <Link href={item.url}>
-                      <item.icon className="h-4 w-4" />
+                    <Link href={item.url} className="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-blue-100 active:bg-blue-200 focus:bg-blue-100">
+                      <item.icon className="h-5 w-5" />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
@@ -99,6 +97,10 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-    </Sidebar>
+      <div className="mt-auto flex flex-col items-center py-6">
+        <Image src="/placeholder-user.jpg" alt="User" width={48} height={48} className="rounded-full border-2 border-blue-200 shadow" />
+        <span className="mt-2 text-sm font-medium">Admin User</span>
+      </div>
+    </aside>
   )
 }
