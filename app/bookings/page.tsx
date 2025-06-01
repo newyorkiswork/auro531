@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
@@ -10,17 +11,22 @@ import { Calendar, Search, Clock, DollarSign, MapPin } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import AddBookingDialog from "./AddBookingDialog"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { useState } from "react"
 
-export default async function BookingsPage() {
-  const { data: bookings, error } = await supabase
-    .from("bookings")
-    .select("*")
-    .order("booking_creation_timestamp", { ascending: false })
-  if (error) {
-    console.error("Error loading bookings:", error)
-    return <div className="p-4">Error loading bookings.</div>
-  }
+export default function BookingsPage() {
+  const [bookings, setBookings] = useState<any[]>([])
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function fetchBookings() {
+      const { data, error } = await supabase
+        .from("bookings")
+        .select("*")
+        .order("booking_creation_timestamp", { ascending: false })
+      if (error) setError(error.message)
+      else setBookings(data || [])
+    }
+    fetchBookings()
+  }, [])
 
   // Group bookings by date
   const grouped = (bookings || []).reduce(
