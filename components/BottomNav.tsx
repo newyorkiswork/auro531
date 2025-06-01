@@ -27,6 +27,7 @@ const moreItems = [
   { name: "Explore", href: "/laundromats-explore", icon: Map },
   { name: "Analytics", href: "/analytics", icon: Map },
   { name: "Laundry Products", href: "/laundry-products", icon: ShoppingCart },
+  { name: "Machines", href: "/machines", icon: Settings2 },
   // Add more as needed
 ];
 
